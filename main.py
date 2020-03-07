@@ -17,7 +17,7 @@ if gpus:
     print(e)
 print("GPUのメモリを制限する")
 def tensor_cast(inputs, labels):
-    inputs = tf.cast(inputs, tf.float32)
+    inputs = tf.cast(inputs, tf.float32)/255.0
     labels = labels 
     #inputs = tf.reshape(inputs, [1, inputs.shape[0], inputs.shape[1], inputs.shape[2]])
     return inputs, tf.cast(labels, tf.int64)
@@ -38,17 +38,8 @@ if __name__ == '__main__':
         a = hparam_list[hparm_key]["alpha"]
         l = hparam_list[hparm_key]["lambd"]
         model = Model("Adam", a, l, batch_size, epochs)
-        print("現在のハイパーパラメータは、", "alpha:", a, "lambda", l)
-        #train_dataset, test_dataset = in_data.read_dataset(batch_size)
         train_images, train_labels, test_images, test_labels = MyLibrary.ReadMnistDataset()
-        print("学習データと学習ラベル", train_images.shape, train_labels.shape)
-        print("テストデータとテストラベル", test_images.shape, test_labels.shape)
-        train_images = np.reshape(train_images, [60000, 28, 28, 1])
-        train_labels = np.reshape(train_labels, [60000,])
-        test_images = np.reshape(test_images, [10000, 28, 28, 1])
-        test_labels = np.reshape(test_labels, [10000,])
 
-        #padded_shape = (tf.constant(-1.0, dtype=tf.float32), tf.constant(0, dtype=tf.int64), tf.constant(False, dtype=tf.bool))
         train_images = tf.data.Dataset.from_tensor_slices(train_images)
         train_labels = tf.data.Dataset.from_tensor_slices(train_labels)
         test_images = tf.data.Dataset.from_tensor_slices(test_images)
