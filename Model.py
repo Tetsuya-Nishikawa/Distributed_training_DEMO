@@ -15,8 +15,8 @@ class Model(tf.keras.Model):
         self.loss_object  = tf.keras.losses.SparseCategoricalCrossentropy(reduction=tf.keras.losses.Reduction.NONE)
 
         with self.mirrored_strategy.scope():
-            self.train_acc = tf.keras.losses.SparseCategoricalCrossentropy()
-            self.test_acc  = tf.keras.losses.SparseCategoricalCrossentropy()
+            self.train_acc =  tf.keras.metrics.SparseCategoricalAccuracy()
+            self.test_acc  =  tf.keras.metrics.SparseCategoricalAccuracy()
 
         self.bn1         = tf.keras.layers.TimeDistributed(tf.keras.layers.BatchNormalization(), input_shape=(112, 200, 3))
         self.conv_1   = tf.keras.layers.TimeDistributed(MyLayer.ConvLayer([3, 3], 3, 16, [2, 2], "VALID"))
