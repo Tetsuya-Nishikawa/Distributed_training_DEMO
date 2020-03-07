@@ -18,7 +18,7 @@ if gpus:
 print("GPUのメモリを制限する")
 def tensor_cast(inputs, labels):
     inputs = tf.cast(inputs, tf.float32)
-    labels = labels - 1
+    labels = labels 
     #inputs = tf.reshape(inputs, [1, inputs.shape[0], inputs.shape[1], inputs.shape[2]])
     return inputs, tf.cast(labels, tf.int64)
 
@@ -49,10 +49,10 @@ if __name__ == '__main__':
         test_labels = np.reshape(test_labels, [10000,])
 
         #padded_shape = (tf.constant(-1.0, dtype=tf.float32), tf.constant(0, dtype=tf.int64), tf.constant(False, dtype=tf.bool))
-        train_images = tf.data.Dataset.from_tensors(train_images)
-        train_labels = tf.data.Dataset.from_tensors(train_labels)
-        test_images = tf.data.Dataset.from_tensors(test_images)
-        test_labels = tf.data.Dataset.from_tensors(test_labels)
+        train_images = tf.data.Dataset.from_tensor_slices(train_images)
+        train_labels = tf.data.Dataset.from_tensor_slices(train_labels)
+        test_images = tf.data.Dataset.from_tensor_slices(test_images)
+        test_labels = tf.data.Dataset.from_tensor_slices(test_labels)
 
         train_dataset = tf.data.Dataset.zip((train_images, train_labels)).map(tensor_cast).shuffle(buffer_size=10, seed=100).batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
         test_dataset  = tf.data.Dataset.zip((test_images, test_labels)).map(tensor_cast).shuffle(buffer_size=10, seed=100).batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
