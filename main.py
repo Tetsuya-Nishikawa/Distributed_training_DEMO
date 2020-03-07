@@ -55,4 +55,4 @@ def main():
         
         model.train(train_ds, test_ds)
         dataplotmanager.y_list, dataplotmanager.t_list = model.give_acc_list()
-        dataplotmanager.hparam_list.append(hparam_list[hparm_key])
+        dataplotmanager.hparam.append(hparam_list[hparm_key])
