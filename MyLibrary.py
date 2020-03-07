@@ -16,6 +16,14 @@ def compute_mode(data):
     arg_max = tf.argmax(data, axis=-1)
     return np.array(stats.mode(arg_max, axis=-1)[0])
 
+def ReadMnistDataset():
+    """
+    mnist datasetを読み込む
+    """
+    mnist_dataset = tf.keras.datasets.fashion_mnist
+    (train_images, train_labels), (test_images, test_labels) = mnist_dataset.load_data()
+    return train_images, train_labels, test_images, test_labels
+
 #https://stackoverflow.com/questions/50882282/tensorflow-bincount-with-axis-option
 def bincount(arr, length, axis=-1):
     """Count the number of ocurrences of each value along an axis."""

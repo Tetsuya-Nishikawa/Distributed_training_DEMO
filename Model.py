@@ -38,17 +38,17 @@ class Model(tf.keras.Model):
 
         def train_step(self, images, labels):
             with tf.GradientTape() as tape:
-                pred = self(images, True)#
-                loss = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=Reduction.None, weights=tf.compat.v1.to_float(mask))
-            grads   = tape.gradient(loss, self.trainable_variables)
+                pred = self(images, True)
+                loss = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=tf.compat.v1.losses.Reduction.NONE)
+            grads = tape.gradient(loss, self.trainable_variables)
             self.opt.apply_gradients(zip(grads, self.trainable_variables))
-            loss = tf.nn.compute_average_loss(loss, global_batch_size=self.BATCH_SIZE)
+            loss = tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
             return loss
 
         def test_step(self, images, labels, mask):
             pred = self(images, mask, False)
-            loss  = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=Reduction.None, weights=tf.compat.v1.to_float(mask))
-            loss =  tf.nn.compute_average_loss(loss, global_batch_size=self.BATCH_SIZE)
+            loss  = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=tf.compat.v1.losses.Reduction.NONE)
+            loss =  tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
 
             return loss
 
