@@ -51,4 +51,4 @@ if __name__ == '__main__':
         train_ds =   model.mirrored_strategy.experimental_distribute_dataset(train_dataset)
         test_ds  =   model.mirrored_strategy.experimental_distribute_dataset(test_dataset)
 
-        model.train(train_ds, test_dataset)
+        model.train(train_ds, test_ds)

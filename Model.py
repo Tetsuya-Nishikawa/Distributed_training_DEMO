@@ -35,7 +35,7 @@ class Model(tf.keras.Model):
             outputs = inputs
             outputs = self.flatten1(outputs)
             outputs = self.dense1(outputs)
-            
+
             return outputs
 
         def train_step(self, images, labels):
@@ -56,12 +56,10 @@ class Model(tf.keras.Model):
 
         @tf.function
         def distributed_train_step(self, images, labels, mask):
-                from main import mirrored_strategy#この汚い部分は、後で修正
                 return  self.mirrored_strategy.experimental_run_v2(self.train_step, args=(images, labels, mask))
 
         @tf.function
         def distributed_test_step(self, images, labels, mask):
-                from main import mirrored_strategy
                 return  self.mirrored_strategy.experimental_run_v2(self.test_step,  args=(images, labels, mask))
 
         def train(self, train_ds, test_ds):
