@@ -88,19 +88,19 @@ class Model(tf.keras.Model):
                     num_batches += 1.0 
             
                 train_mean_loss = train_mean_loss / num_batches
-                print("the number of train batch : ", batch+1, "train_mean_loss : ", train_mean_loss, "train acc : ", self.train_accresult())
+                print("the number of train batch : ", batch+1, "train_mean_loss : ", train_mean_loss, "train acc : ", self.train_acc.result())
                 num_batches = 0.0
                 for (batch, (test_videos, test_labels)) in enumerate(test_ds):
                     losses           = self.distributed_test_step(test_videos, test_labels)
                     test_mean_loss  =  test_mean_loss  + self.mirrored_strategy.reduce(tf.distribute.ReduceOp.SUM, losses,axis=None)
                     num_batches += 1.0
     
-                #dataplotmanager.y_list.append(train_accuracy.result()result())
-                #dataplotmanager.t_list.append(test_accuracy.result()result())
+                #dataplotmanager.y_list.append(train_accuracy.result().result())
+                #dataplotmanager.t_list.append(test_accuracy.result().result())
                 test_mean_loss = test_mean_loss / num_batches
                 print("the number of test batch : ", batch+1)
                 print("epoch : ", epoch+1, " | train loss value : ", train_mean_loss.numpy(), ", test loss value : ", test_mean_loss.numpy())
-                print("train acc : ", self.train_accresult(), "test acc : ", self.test_accresult())
+                print("train acc : ", self.train_acc.result(), "test acc : ", self.test_acc.result())
                 self.accuracy_reset()
                 #weights_filename = "Model" + str(a) + str(l) + ".bin"
                 #self.save_weights(weights_filename)#定期的に保存
