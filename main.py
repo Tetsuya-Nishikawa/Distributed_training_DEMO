@@ -38,16 +38,7 @@ if __name__ == '__main__':
         a = hparam_list[hparm_key]["alpha"]
         l = hparam_list[hparm_key]["lambd"]
         model = Model("Adam", a, l, batch_size, epochs)
-        train_images, train_labels, test_images, test_labels = MyLibrary.ReadMnistDataset()
-
-        train_images = tf.data.Dataset.from_tensor_slices(train_images)
-        train_labels = tf.data.Dataset.from_tensor_slices(train_labels)
-        test_images = tf.data.Dataset.from_tensor_slices(test_images)
-        test_labels = tf.data.Dataset.from_tensor_slices(test_labels)
-
-        train_dataset = tf.data.Dataset.zip((train_images, train_labels)).map(tensor_cast).shuffle(buffer_size=10, seed=100).batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
-        test_dataset  = tf.data.Dataset.zip((test_images, test_labels)).map(tensor_cast).shuffle(buffer_size=10, seed=100).batch(batch_size).prefetch(tf.data.experimental.AUTOTUNE)
-
+        train_dataset, test_dataset = io_data.read_dataset(batch_size)
         train_ds =   model.mirrored_strategy.experimental_distribute_dataset(train_dataset)
         test_ds  =   model.mirrored_strategy.experimental_distribute_dataset(test_dataset)
         
