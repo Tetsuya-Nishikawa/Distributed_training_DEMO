@@ -23,7 +23,8 @@ def tensor_cast(inputs, labels):
     return inputs, tf.cast(labels, tf.int64)
 
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
+def main():
     alpha = [10**(-2), 10**(-3), 10**(-4)]
     lambd = [0, 1, 10, 100]
     hparam_list = MyLibrary.make_hparam_list(alpha, lambd)
