@@ -58,7 +58,7 @@ def main():
         dataplotmanager.y_list.append(y_l)
         dataplotmanager.t_list.append(t_l)
         dataplotmanager.hparam.append(hparam_list[hparm_key])
-    print(dataplotmanager.y_list)
+    print("y_listの長さは、", len(dataplotmanager.y_list))
     print(dataplotmanager.t_list)
     print(dataplotmanager.hparam)
     dataplotmanager.graph()
