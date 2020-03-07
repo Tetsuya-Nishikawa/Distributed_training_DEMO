@@ -2,8 +2,11 @@ import tensorflow as tf
 import skvideo.io
 import imutils
 
-train_path = "./dataset/lsa_train_data.tfrecords"
-test_path  = "./dataset/lsa_test_data.tfrecords"
+#input_path = "/home/ubuntu/nfs/cybozu/Temporal_Transformation/SampledVideo"
+#/home/ubuntu/nfs/cybozu/video_dataset/train_dataset
+#/home/ubuntu/nfs/cybozu/video_dataset/test_dataset
+tfrecord_train_dir = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/train.tfrecords"
+tfrecord_test_dir  = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/test.tfrecords"
 
 def tensor_cast(inputs, labels, mask):
     inputs = tf.cast(inputs, tf.float32)
@@ -73,8 +76,8 @@ def parse_tfrecord(serialized_example):
     return video, example['label'], mask
 
 def write_dataset():
-    train_input_path = "*.mp4"
-    test_input_path = "*.mp4"
+    train_input_path = "/home/ubuntu/nfs/cybozu/video_dataset/train_dataset/*.mp4"
+    test_input_path = "/home/ubuntu/nfs/cybozu/video_dataset/test_dataset/*.mp4"
 
     with tf.io.TFRecordWriter(tfrecord_train_dir) as writer:
 
@@ -89,8 +92,7 @@ def write_dataset():
 
             label = video_path[0]
             label = int(label)
-            print("labelは、", label)
-           
+            print("現在処理しているビデオのインデックスは、", video_list.index(video_path))
             example = serialize_example(video_bytes, label, mask, len(video))
             writer.write(example)
     with tf.io.TFRecordWriter(tfrecord_test_dir) as writer:
@@ -106,8 +108,7 @@ def write_dataset():
 
             label = video_path[0]
             label = int(label)
-            print("labelは、", label)
-           
+            print("現在処理しているビデオのインデックスは、", video_list.index(video_path))
             example = serialize_example(video_bytes, label, mask, len(video))
             writer.write(example)
 
@@ -123,3 +124,5 @@ def read_dataset(BATCH_SIZE):
     test_dataset =  parsed_test_dataset.map(tensor_cast).shuffle(buffer_size=10,  seed=100).padded_batch(BATCH_SIZE,  padded_shapes=([201, 112, 200, 3], [201, 64], [201]), padding_values=padded_shape).prefetch(tf.data.experimental.AUTOTUNE)
     return train_dataset, test_dataset
 
+if __name__ == '__main__':
+    write_dataset()
