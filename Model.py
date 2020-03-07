@@ -88,7 +88,7 @@ class Model(tf.keras.Model):
                     num_batches += 1.0 
             
                 train_mean_loss = train_mean_loss / num_batches
-                print("the number of train batch : ", batch+1, "train_mean_loss : ", train_mean_loss, "train acc : ", train_acc.numpy()*100)
+                print("the number of train batch : ", batch+1, "train_mean_loss : ", train_mean_loss, "train acc : ", self.train_acc.numpy()*100)
                 num_batches = 0.0
                 for (batch, (test_videos, test_labels)) in enumerate(test_ds):
                     losses           = self.distributed_test_step(test_videos, test_labels)
