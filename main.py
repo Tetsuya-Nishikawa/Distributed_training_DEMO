@@ -54,7 +54,9 @@ def main():
         test_ds  =   model.mirrored_strategy.experimental_distribute_dataset(test_dataset)
         
         model.train(train_ds, test_ds)
-        dataplotmanager.y_list, dataplotmanager.t_list = model.give_acc_list()
+        y_l, t_l = model.give_acc_list()
+        dataplotmanager.y_list.append(y_l)
+        dataplotmanager.t_list.append(t_l)
         dataplotmanager.hparam.append(hparam_list[hparm_key])
     print(dataplotmanager.y_list)
     print(dataplotmanager.t_list)
