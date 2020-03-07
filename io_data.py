@@ -7,8 +7,8 @@ import os
 #input_path = "/home/ubuntu/nfs/cybozu/Temporal_Transformation/SampledVideo"
 #/home/ubuntu/nfs/cybozu/video_dataset/train_dataset
 #/home/ubuntu/nfs/cybozu/video_dataset/test_dataset
-tfrecord_train_dir = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/train.tfrecords"
-tfrecord_test_dir  = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/test.tfrecords"
+train_path = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/train.tfrecords"
+test_path  = "/home/ubuntu/nfs/cybozu/video_dataset/tfrecords/test.tfrecords"
 
 def tensor_cast(inputs, labels, mask):
     inputs = tf.cast(inputs, tf.float32)
@@ -113,11 +113,9 @@ def read_dataset(BATCH_SIZE):
     tfrecord_test_dataset = tf.data.TFRecordDataset(test_path)
     parsed_test_dataset = tfrecord_test_dataset.map(parse_tfrecord)
 
-    padded_shape = (tf.constant(-1.0, dtype=tf.float32), tf.constant(0, dtype=tf.int64), tf.constant(False, dtype=tf.bool))
-    train_dataset = parsed_train_dataset.map(tensor_cast).shuffle(buffer_size=10, seed=100).padded_batch(BATCH_SIZE,padded_shapes=([201, 112, 200, 3], [201, 64], [201]), padding_values=padded_shape).prefetch(tf.data.experimental.AUTOTUNE)
-    test_dataset =  parsed_test_dataset.map(tensor_cast).shuffle(buffer_size=10,  seed=100).padded_batch(BATCH_SIZE,  padded_shapes=([201, 112, 200, 3], [201, 64], [201]), padding_values=padded_shape).prefetch(tf.data.experimental.AUTOTUNE)
+    train_dataset = parsed_train_dataset.map(tensor_cast).shuffle(buffer_size=10, seed=100).batch(BATCH_SIZE).prefetch(tf.data.experimental.AUTOTUNE)
+    test_dataset =  parsed_test_dataset.map(tensor_cast).shuffle(buffer_size=10,  seed=100).batch(BATCH_SIZE).prefetch(tf.data.experimental.AUTOTUNE)
     return train_dataset, test_dataset
 
-#データセットを作成するときだけ、実行する
 if __name__ == '__main__':
     write_dataset()
