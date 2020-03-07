@@ -6,6 +6,7 @@ import MyLayer
 
 class Model(tf.keras.Model):
     def __init__(self, opt_name, alpha, lambd, batch_size, epochs):
+        super(Model, self).__init__()
         self.lambd = lambd
         self.alpha = alpha
         self.batch_size = batch_size
@@ -19,21 +20,22 @@ class Model(tf.keras.Model):
         self.bn1         = tf.keras.layers.TimeDistributed(tf.keras.layers.BatchNormalization(), input_shape=(112, 200, 3))
         self.conv_1   = tf.keras.layers.TimeDistributed(MyLayer.ConvLayer([3, 3], 3, 16, [2, 2], "VALID"))
         self.pool1    = tf.keras.layers.TimeDistributed(tf.keras.layers.MaxPool2D())
-        self.flatten1 =  tf.keras.layers.TimeDistributed(tf.keras.layers.Flatten())
+        self.flatten1 =  tf.keras.layers.Flatten()
 
         self.bn2         = tf.keras.layers.BatchNormalization()
-        self.dense1  = MyLayer.DenseLayer(2048, False)
+        self.dense1  = MyLayer.DenseLayer(10, True)
         
         self.bn3         = tf.keras.layers.BatchNormalization()
         self.dense2  = MyLayer.DenseLayer(1024, False)
         
         self.bn4         = tf.keras.layers.BatchNormalization()
-        self.dense3  = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(64, activation='none'))
+        self.dense3  = tf.keras.layers.TimeDistributed(tf.keras.layers.Dense(64, activation=None))
 
         def call(self, inputs, training=None):
             outputs = inputs
-
-
+            outputs = self.flatten1(outputs)
+            outputs = self.dense1(outputs)
+            
             return outputs
 
         def train_step(self, images, labels):
