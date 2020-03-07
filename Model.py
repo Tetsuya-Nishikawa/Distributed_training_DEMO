@@ -13,6 +13,8 @@ class Model(tf.keras.Model):
         self.epochs = epochs
         self.mirrored_strategy = tf.distribute.MirroredStrategy()
         self.loss_object  = tf.keras.losses.SparseCategoricalCrossentropy(reduction=tf.keras.losses.Reduction.NONE)
+        self.y_list = []
+        self.t_list = []
 
         with self.mirrored_strategy.scope():
             self.train_acc =  tf.keras.metrics.SparseCategoricalAccuracy()
@@ -95,8 +97,8 @@ class Model(tf.keras.Model):
                     test_mean_loss  =  test_mean_loss  + self.mirrored_strategy.reduce(tf.distribute.ReduceOp.SUM, losses,axis=None)
                     num_batches += 1.0
     
-                #dataplotmanager.y_list.append(train_accuracy.result().result())
-                #dataplotmanager.t_list.append(test_accuracy.result().result())
+                self.y_list.append(train_accuracy.result())
+                self.t_list.append(test_accuracy.result())
                 test_mean_loss = test_mean_loss / num_batches
                 print("the number of test batch : ", batch+1)
                 print("epoch : ", epoch+1, " | train loss value : ", train_mean_loss.numpy(), ", test loss value : ", test_mean_loss.numpy())
@@ -109,3 +111,5 @@ class Model(tf.keras.Model):
         self.train_acc.reset_states()
         self.test_acc.reset_states()
 
+    def give_acc_list(self):
+        return self.y_list, self.t_list

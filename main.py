@@ -32,6 +32,7 @@ if __name__ == '__main__':
     
     #グリッドリサーチ
     print(hparam_list)
+    dataplotmanager = DataPlotManager(epochs, hparam_list)
     for hparm_key in hparam_list:
 
         tf.random.set_seed(seed=1234)
@@ -52,3 +53,5 @@ if __name__ == '__main__':
         test_ds  =   model.mirrored_strategy.experimental_distribute_dataset(test_dataset)
         
         model.train(train_ds, test_ds)
+        dataplotmanager.y_list, dataplotmanager.t_list = model.give_acc_list()
+        dataplotmanager.hparam_list.append(hparam_list[hparm_key])

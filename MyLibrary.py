@@ -19,6 +19,8 @@ def compute_mode(data):
 def ReadMnistDataset():
     """
     mnist datasetを読み込む
+    コードが正しく動作しているかをチェックするためのデータセット
+    ラベル数10(0~9)
     """
     mnist_dataset = tf.keras.datasets.fashion_mnist
     (train_images, train_labels), (test_images, test_labels) = mnist_dataset.load_data()
@@ -43,12 +45,30 @@ def make_hparam_list(alpha, lambd):
             index = index + 1
     return params
 class DataPlotManager(object):
-    def __init__(self, epochs):
+    def __init__(self, epochs, hparam):
         self.epochs = epochs
         self.y_list    = [] 
         self.x         = [epoch+1 for epoch in range(self.epochs)]
         self.t_list = []
         self.hparam = []
+    
+    def CollectResultData(train_result, test_result):
+        """
+        結果を収集する
+            引数：
+                reulst->実数(認識精度)
+        """
+        self.y_list.append(train_result)
+        self.t_list.append(test_result)
+
+    def CollectHparam(hp):
+        """
+        ハイパーパラメータを収集する
+            引数：
+                hp->１組のハイパーパラメータ
+        """
+        self.hparam.append(hp)
+
     def graph(self):
         self.num_hparam = len(self.hparam_list)
         self.y_list    = np.array(self.y_list).reshape(self.num_hparam, epochs) 
