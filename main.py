@@ -27,7 +27,7 @@ if __name__ == '__main__':
     alpha = [10**(-2), 10**(-3), 10**(-4)]
     lambd = [0, 1, 10, 100]
     hparam_list = MyLibrary.make_hparam_list(alpha, lambd)
-    batch_size = 10
+    batch_size = 100
     epochs = 5
     
     #グリッドリサーチ
