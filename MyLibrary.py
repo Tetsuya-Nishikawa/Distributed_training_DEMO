@@ -73,7 +73,6 @@ class DataPlotManager(object):
         self.num_hparam = len(self.hparam_list)
         self.y_list    = np.array(self.y_list).reshape(self.num_hparam, epochs) 
         self.x          = [epoch+1 for epoch in range(self.epochs)]
-        self.hparam    = self.hparam_list
         self.t_list = np.array(self.t_list).reshape(self.num_hparam, epochs) 
 
         fig = plt.figure(figsize=(10, 10))

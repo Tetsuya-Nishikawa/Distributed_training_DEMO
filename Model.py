@@ -97,8 +97,8 @@ class Model(tf.keras.Model):
                     test_mean_loss  =  test_mean_loss  + self.mirrored_strategy.reduce(tf.distribute.ReduceOp.SUM, losses,axis=None)
                     num_batches += 1.0
     
-                self.y_list.append(self.train_accuracy.result())
-                self.t_list.append(self.test_accuracy.result())
+                self.y_list.append(self.train_acc.result())
+                self.t_list.append(self.test_acc.result())
                 test_mean_loss = test_mean_loss / num_batches
                 print("the number of test batch : ", batch+1)
                 print("epoch : ", epoch+1, " | train loss value : ", train_mean_loss.numpy(), ", test loss value : ", test_mean_loss.numpy())

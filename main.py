@@ -25,15 +25,15 @@ def tensor_cast(inputs, labels):
 
 #if __name__ == '__main__':
 def main():
-    alpha = [10**(-2), 10**(-3), 10**(-4)]
-    lambd = [0, 1, 10, 100]
+    alpha = [10**(-2)]
+    lambd = [0, 1]
     hparam_list = MyLibrary.make_hparam_list(alpha, lambd)
     batch_size = 100
     epochs = 5
     
     #グリッドリサーチ
     print(hparam_list)
-    dataplotmanager = DataPlotManager(epochs, hparam_list)
+    dataplotmanager = MyLibrary.DataPlotManager(epochs, hparam_list)
     for hparm_key in hparam_list:
 
         tf.random.set_seed(seed=1234)
@@ -56,3 +56,7 @@ def main():
         model.train(train_ds, test_ds)
         dataplotmanager.y_list, dataplotmanager.t_list = model.give_acc_list()
         dataplotmanager.hparam.append(hparam_list[hparm_key])
+    print(dataplotmanager.y_list)
+    print(dataplotmanager.t_list)
+    print(dataplotmanager.hparam)
+    dataplotmanager.graph()
