@@ -1,6 +1,8 @@
 import tensorflow as tf
 import skvideo.io
 import imutils
+import glob
+import os
 
 #input_path = "/home/ubuntu/nfs/cybozu/Temporal_Transformation/SampledVideo"
 #/home/ubuntu/nfs/cybozu/video_dataset/train_dataset
@@ -42,7 +44,7 @@ def _int64_feature(value):
     """Returns an int64_list from a bool / enum / int / uint."""
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
-def serialize_example(video, label, video_shape, mask):
+def serialize_example(video, label, video_shape):
     feature = {
         'video': _bytes_feature(video),
         'label': _int64_feature(label),
@@ -50,7 +52,6 @@ def serialize_example(video, label, video_shape, mask):
         'height': _int64_feature(video_shape[1]),
         'width': _int64_feature(video_shape[2]),
         'depth': _int64_feature(video_shape[3]),
-        'mask' : _bytes_feature(mask),
     }
     example_proto = tf.train.Example(features=tf.train.Features(feature=feature))
     return example_proto.SerializeToString()
@@ -63,7 +64,6 @@ def parse_tfrecord(serialized_example):
         'height': tf.io.FixedLenFeature((), tf.int64),
         'width': tf.io.FixedLenFeature((), tf.int64),
         'depth': tf.io.FixedLenFeature((), tf.int64),
-        'mask' : tf.io.FixedLenFeature((), tf.string),
     }
     example = tf.io.parse_single_example(serialized_example, feature_description)
     
@@ -71,9 +71,7 @@ def parse_tfrecord(serialized_example):
     video_shape = [example['len_seq'], example['height'], example['width'], example['depth']]
     video = tf.reshape(video, video_shape)
 
-    mask = tf.io.parse_tensor(example['mask'], out_type = tf.bool)
-
-    return video, example['label'], mask
+    return video, example['label']
 
 def write_dataset():
     train_input_path = "/home/ubuntu/nfs/cybozu/video_dataset/train_dataset/*.mp4"
@@ -85,15 +83,13 @@ def write_dataset():
 
         for video_path in video_list:
             video = skvideo.io.vread(video_path)
-            mask = GenerateMaskTensor(video) 
 
-            mask = tf.io.serialize_tensor(mask)
             video_bytes = tf.io.serialize_tensor(video)
 
-            label = video_path[0]
+            label = video_path.split(os.sep)[7][4:-8]
             label = int(label)
             print("現在処理しているビデオのインデックスは、", video_list.index(video_path))
-            example = serialize_example(video_bytes, label, mask, len(video))
+            example = serialize_example(video_bytes, label, len(video))
             writer.write(example)
     with tf.io.TFRecordWriter(tfrecord_test_dir) as writer:
 
@@ -101,15 +97,13 @@ def write_dataset():
 
         for video_path in video_list:
             video = skvideo.io.vread(video_path)
-            mask = GenerateMaskTensor(video) 
 
-            mask = tf.io.serialize_tensor(mask)
             video_bytes = tf.io.serialize_tensor(video)
 
-            label = video_path[0]
+            label = video_path.split(os.sep)[7][4:-8]
             label = int(label)
             print("現在処理しているビデオのインデックスは、", video_list.index(video_path))
-            example = serialize_example(video_bytes, label, mask, len(video))
+            example = serialize_example(video_bytes, label, len(video))
             writer.write(example)
 
 
