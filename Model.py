@@ -48,10 +48,9 @@ class Model(tf.keras.Model):
             pred = self(videos, True)
             #loss = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=tf.compat.v1.losses.Reduction.NONE)
             loss = self.loss_object(labels, pred)
-
+            loss = tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
         grads = tape.gradient(loss, self.trainable_variables)
         self.opt.apply_gradients(zip(grads, self.trainable_variables))
-        loss = tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
         return loss
 
     def test_step(self, videos, labels):
@@ -82,6 +81,7 @@ class Model(tf.keras.Model):
                     self.opt.learning_rate = self.opt.learning_rate*0.1
 
                 for (batch, (train_videos, train_labels)) in enumerate(train_ds): 
+                    print("train_videosとtrain_labels", train_videos.shape, train_labels.shape)
                     print("hparam : ", "epoch : ", epoch+1, "batch : ",batch+1)
                     losses            = self.distributed_train_step(train_videos, train_labels)
                     train_mean_loss       = train_mean_loss +self.mirrored_strategy.reduce(tf.distribute.ReduceOp.SUM,losses,axis=None)
