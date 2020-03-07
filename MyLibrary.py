@@ -70,7 +70,7 @@ class DataPlotManager(object):
         self.hparam.append(hp)
 
     def graph(self):
-        self.num_hparam = len(self.hparam_list)
+        self.num_hparam = len(self.hparam)
         self.y_list    = np.array(self.y_list).reshape(self.num_hparam, epochs) 
         self.x          = [epoch+1 for epoch in range(self.epochs)]
         self.t_list = np.array(self.t_list).reshape(self.num_hparam, epochs) 
