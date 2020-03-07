@@ -81,7 +81,7 @@ class Model(tf.keras.Model):
                     self.opt.learning_rate = self.opt.learning_rate*0.1
 
                 for (batch, (train_videos, train_labels)) in enumerate(train_ds): 
-                    print("train_videosとtrain_labels", train_videos.shape, train_labels.shape)
+
                     print("hparam : ", "epoch : ", epoch+1, "batch : ",batch+1)
                     losses            = self.distributed_train_step(train_videos, train_labels)
                     train_mean_loss       = train_mean_loss +self.mirrored_strategy.reduce(tf.distribute.ReduceOp.SUM,losses,axis=None)
