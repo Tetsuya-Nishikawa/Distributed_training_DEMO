@@ -53,6 +53,8 @@ class Model(tf.keras.Model):
             loss = tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
         grads = tape.gradient(loss, self.trainable_variables)
         self.opt.apply_gradients(zip(grads, self.trainable_variables))
+        self.train_acc.update_state(labels, pred)
+
         return loss
 
     def test_step(self, videos, labels):
@@ -60,6 +62,7 @@ class Model(tf.keras.Model):
         #loss  = tf.compat.v1.losses.softmax_cross_entropy(onehot_labels=labels, logits=pred, reduction=tf.compat.v1.losses.Reduction.NONE)
         loss = self.loss_object(labels, pred)
         loss =  tf.nn.compute_average_loss(loss, global_batch_size=self.batch_size)
+        self.test_acc.update_state(labels, pred)
 
         return loss
 

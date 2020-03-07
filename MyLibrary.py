@@ -1,5 +1,7 @@
 import tensorflow as tf
 import scipy.stats as stats
+import numpy as np
+import matplotlib.pyplot as plt
 
 def zero_padding(inputs, pad):
     padding = tf.constant([[0, 0], [pad, pad], [pad, pad], [0, 0]])
@@ -71,19 +73,21 @@ class DataPlotManager(object):
 
     def graph(self):
         self.num_hparam = len(self.hparam)
-        self.y_list    = np.array(self.y_list).reshape(self.num_hparam, epochs) 
+        self.y_list    = np.array(self.y_list).reshape(self.num_hparam, self.epochs) 
         self.x          = [epoch+1 for epoch in range(self.epochs)]
-        self.t_list = np.array(self.t_list).reshape(self.num_hparam, epochs) 
+        self.t_list    = np.array(self.t_list).reshape(self.num_hparam, self.epochs) 
 
         fig = plt.figure(figsize=(10, 10))
-        plt.subplots_adjust(wspace=2, hspace=2)
-        x_ax = self.num_opts
-        for i in range(self.opt_times):
+        plt.subplots_adjust(wspace=10, hspace=10)
+        x_ax = self.num_hparam
+        for i in range(self.num_hparam):
 
             ax = plt.subplot(x_ax, 1, i+1)
             ax.set_title(self.hparam[i])
             ax.set_ylim(0.0, 1.0)
-            ax.plot(self.x, self.y_list[i], self.t_list[i])
+            ax.plot(self.x, self.y_list[i])
+            ax.plot(self.x, self.t_list[i])
+
         fig.suptitle('red:val_data blue:train_data', fontsize=20)
         plt.tight_layout()
         try:
